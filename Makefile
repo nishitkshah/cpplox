@@ -11,8 +11,9 @@ OBJ = add.o adder.o
 
 main: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+	main
 
 .PHONY: clean
 
 clean:
-	del *.o
+	rm *.o
