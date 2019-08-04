@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #include <iostream>
 #include <cstdlib>
 #include "lox.hpp"

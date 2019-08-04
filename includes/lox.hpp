@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #ifndef LOX_H
 #define LOX_H
 

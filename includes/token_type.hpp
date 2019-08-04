@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #ifndef TOKEN_TYPE_H
 #define TOKEN_TYPE_H
 

@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #include <string>
 
 #include "token.hpp"

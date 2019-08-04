@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #include <cctype>
 #include <string>
 #include <vector>

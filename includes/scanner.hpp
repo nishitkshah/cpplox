@@ -1,3 +1,5 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #ifndef SCANNER_H
 #define SCANNER_H
 
