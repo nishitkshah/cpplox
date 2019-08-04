@@ -2,16 +2,18 @@ IDIR=includes
 CC=g++
 CFLAGS=-I $(IDIR)
 
-CDIR=core
+CDIR=lox
 
-OBJ = add.o adder.o
+OBJ = cpplox.o lox.o
+
+%.o: %.cpp
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 %.o: $(CDIR)/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-main: $(OBJ)
+lox: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
-	main
 
 .PHONY: clean
 
