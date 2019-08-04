@@ -1,0 +1,8 @@
+void main(){
+    if(true){
+        var a = 1;
+    }else{
+        while(1.2 or "a\"\\")
+            print "Hi"
+    }
+}

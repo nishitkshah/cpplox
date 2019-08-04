@@ -1,6 +1,6 @@
 IDIR=includes
 CC=g++
-CFLAGS=-I $(IDIR)
+CFLAGS=-I $(IDIR) -g
 
 CDIR=lox
 
