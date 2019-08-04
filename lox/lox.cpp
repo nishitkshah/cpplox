@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "lox.hpp"
+#include "scanner.hpp"
+#include "token.hpp"
 
 namespace lox {
 
@@ -32,13 +34,11 @@ namespace lox {
     }
 
     void Lox::run(std::string s) {
-        /*
         Scanner scanner(s);
-        std::vector<Token> tokens = scanner.scanTokens();
+        std::vector<Token> tokens = scanner.scan_tokens();
         for(Token token: tokens){
             std::cout << token.str() << std::endl;
-        } */
-        std::cout << s <<std::endl;
+        }
     }
 
     void Lox::error(int line, std::string message) {
@@ -50,4 +50,4 @@ namespace lox {
         had_error = true;
     }
 
-}
+} // namespace lox

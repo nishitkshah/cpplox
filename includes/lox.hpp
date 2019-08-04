@@ -10,7 +10,6 @@ namespace lox {
             static bool had_error;
 
         public:
-            Lox();
             static void run_file(std::string path);
             static void run_prompt();
             static void run(std::string s);
@@ -19,6 +18,6 @@ namespace lox {
             static void report(int line, std::string where, std::string message);
     };
 
-}
+} // namespace lox
 
 #endif

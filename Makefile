@@ -4,7 +4,7 @@ CFLAGS=-I $(IDIR)
 
 CDIR=lox
 
-OBJ = cpplox.o lox.o
+OBJ = cpplox.o lox.o scanner.o token.o
 
 %.o: %.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
