@@ -15,6 +15,13 @@ namespace lox {
         line(line)
     {}
 
+    Token::Token(const lox::Token &token) :
+        type(token.type),
+        lexeme(token.lexeme),
+        literal(token.literal),
+        line(token.line)
+    {}
+
     std::string Token::str() const {
         return lexeme + " " + literal;
     }

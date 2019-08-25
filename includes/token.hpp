@@ -19,6 +19,7 @@ namespace lox {
         public:
             Token(TokenType type, std::string lexeme,
                 std::string literal, int line);
+            Token(const lox::Token &token);
 
             std::string str() const;
     };
