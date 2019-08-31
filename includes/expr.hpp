@@ -35,9 +35,7 @@ namespace lox {
         public:
             Binary(Expr* left, Token oper, Expr* right);
             
-            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
-                visitor.visit(this, vr);
-            }
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override;
             
             Expr* left;
             Token oper;
@@ -48,9 +46,7 @@ namespace lox {
         public:
             Grouping(Expr* expression);
             
-            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
-                visitor.visit(this, vr);
-            }
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override;
                         
             Expr* expression;
     };    // class Grouping
@@ -59,9 +55,7 @@ namespace lox {
         public:
             Literal(std::string value);
             
-            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
-                visitor.visit(this, vr);
-            }
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override;
             
             std::string value;
     };    // class Literal
@@ -70,9 +64,7 @@ namespace lox {
         public:
             Unary(Token oper, Expr* right);
             
-            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
-                visitor.visit(this, vr);
-            }
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override;
             
             Token oper;
             Expr* right;
