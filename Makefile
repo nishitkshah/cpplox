@@ -5,8 +5,8 @@ CFLAGS=-I $(IDIR) -g
 CXXDIR=lox
 ASTDIR=lox/ast
 
-OBJ = cpplox.o lox.o scanner.o token.o expr.o
-PRINTEROBJ = lox.o scanner.o token.o expr.o ast_printer.o
+OBJ = cpplox.o lox.o scanner.o token.o expr.o visitor_return.o
+PRINTEROBJ = lox.o scanner.o token.o expr.o ast_printer.o visitor_return.o
 
 %.o: %.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)

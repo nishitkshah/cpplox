@@ -1,44 +1,69 @@
-#include "expr.hpp"
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "expr.hpp"
+#include "visitor_return.hpp"
+
 namespace lox
 {
 
-    class AstPrinter : Expr::Visitor<std::string> {
+    class AstPrinter : Expr::Visitor {
         public:
-            std::string print(Expr* expr) {                                            
-                return expr->accept<std::string>(*this);                                          
+            void print(Expr* expr, VisitorReturn vr) {
+                expr->accept(*this, vr);
             }
 
-            virtual std::string visitBinaryExpr(Expr::Binary* expr) override {
+            virtual void visit(Expr::Binary* expr, VisitorReturn vr) override {
                 std::vector<Expr*> ep = {expr->left, expr->right};
-                return parenthesize((expr->oper).lexeme, ep);
+                if(vr.return_type != VisitorReturnType::STRING){
+                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+                    throw "AstPrinter expects VisitorReturnType STRING\n";
+                }
+                std::string* ret_pt = (std::string*)vr.return_pointer;
+                *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
             }
 
-            virtual std::string visitGroupingExpr(Expr::Grouping* expr) override {
+            virtual void visit(Expr::Grouping* expr, VisitorReturn vr) override {
                 std::vector<Expr*> ep = {expr->expression};
-                return parenthesize("group", ep);
+                if(vr.return_type != VisitorReturnType::STRING){
+                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+                    throw "AstPrinter expects VisitorReturnType STRING\n";
+                }
+                std::string* ret_pt = (std::string*)vr.return_pointer;
+                *(ret_pt) = parenthesize("group", ep);
             }
 
-            virtual std::string visitLiteralExpr(Expr::Literal* expr) override {
-                return expr->value;
+            virtual void visit(Expr::Literal* expr, VisitorReturn vr) override {
+                if(vr.return_type != VisitorReturnType::STRING){
+                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+                    throw "AstPrinter expects VisitorReturnType STRING\n";
+                }
+                std::string* ret_pt = (std::string*)vr.return_pointer;
+                *(ret_pt) = expr->value;
             }
 
-            virtual std::string visitUnaryExpr(Expr::Unary* expr) override {
+            virtual void visit(Expr::Unary* expr, VisitorReturn vr) override {
                 std::vector<Expr*> ep = {expr->right};
-                return parenthesize((expr->oper).lexeme, ep);
+                if(vr.return_type != VisitorReturnType::STRING){
+                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+                    throw "AstPrinter expects VisitorReturnType STRING\n";
+                }
+                std::string* ret_pt = (std::string*)vr.return_pointer;
+                *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
             }
 
         private:
             std::string parenthesize(std::string name, std::vector<Expr*> ep) {
                 std::stringstream ss;
                 ss << "(" << name;
-                for(auto p: ep)
-                    ss << " " << (p->accept)(*this);
+                for(auto p: ep){
+                    std::string s;
+                    VisitorReturn vr(VisitorReturnType::STRING, &s);
+                    (p->accept)(*this, vr);
+                    ss << " " << s;
+                }
                 ss << ")";
                 return ss.str();
             }
@@ -57,6 +82,9 @@ int main() {
             new lox::Expr::Literal(std::string("45.67"))
         )
     );
+    std::string s;
+    lox::VisitorReturn vr(lox::VisitorReturnType::STRING, &s);
     lox::AstPrinter ap;
-    std::cout << ap.print(expression);
+    ap.print(expression, vr);
+    std::cout << s;
 }

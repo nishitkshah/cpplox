@@ -4,48 +4,39 @@
 #define EXPR_H
 
 #include <string>
+
 #include "token.hpp"
+#include "visitor_return.hpp"
 
 namespace lox {
-
-    enum class ExprType
-    {
-        BINARY, GROUPING, LITERAL, UNARY
-    };
     
     class Expr {
         // Abstract class for Abstract Syntax Tree
         public:
-            ExprType expr_type;
-            Expr(ExprType expr_type);
-
             class Binary;
             class Grouping;
             class Literal;
             class Unary;
-            template <class T>
+            
             class Visitor;
             
-        template <class T>
-        T accept(Expr::Visitor<T> &visitor);
+            virtual void accept(Expr::Visitor &visitor, VisitorReturn vr)=0;
     };    // class Expr
     
-    template <class T>
     class Expr::Visitor {
         public:
-            virtual T visitBinaryExpr(Binary* expr)=0;
-            virtual T visitGroupingExpr(Grouping* expr)=0;
-            virtual T visitLiteralExpr(Literal* expr)=0;
-            virtual T visitUnaryExpr(Unary* expr)=0;
+            virtual void visit(Binary* expr, VisitorReturn vr)=0;
+            virtual void visit(Grouping* expr, VisitorReturn vr)=0;
+            virtual void visit(Literal* expr, VisitorReturn vr)=0;
+            virtual void visit(Unary* expr, VisitorReturn vr)=0;
     };    // class Visitor
     
     class Expr::Binary : public Expr {
         public:
             Binary(Expr* left, Token oper, Expr* right);
             
-            template <class T>
-            T accept(Visitor<T> &visitor) {
-                return visitor.visitBinaryExpr(this);
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
+                visitor.visit(this, vr);
             }
             
             Expr* left;
@@ -57,9 +48,8 @@ namespace lox {
         public:
             Grouping(Expr* expression);
             
-            template <class T>
-            T accept(Visitor<T> &visitor) {
-                return visitor.visitGroupingExpr(this);
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
+                visitor.visit(this, vr);
             }
                         
             Expr* expression;
@@ -69,9 +59,8 @@ namespace lox {
         public:
             Literal(std::string value);
             
-            template <class T>
-            T accept(Visitor<T> &visitor) {
-                return visitor.visitLiteralExpr(this);
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
+                visitor.visit(this, vr);
             }
             
             std::string value;
@@ -81,9 +70,8 @@ namespace lox {
         public:
             Unary(Token oper, Expr* right);
             
-            template <class T>
-            T accept(Expr::Visitor<T> &visitor) {
-                return visitor.visitUnaryExpr(this);
+            virtual void accept(Visitor &visitor, VisitorReturn vr) override {
+                visitor.visit(this, vr);
             }
             
             Token oper;
