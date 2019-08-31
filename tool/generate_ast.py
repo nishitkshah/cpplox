@@ -80,7 +80,7 @@ def generate_header_file(file_obj, base_name, subclasses, indent=0):
     generate_base_class(file_obj, base_name, subclasses, indent+1)
     generate_visitor_class(file_obj, base_name, subclasses, indent+1)
     generate_subclasses(file_obj, base_name, subclasses, indent+1)
-    add_to_file(file_obj, indent, "")
+    add_to_file(file_obj, indent+1, "")
     add_to_file(file_obj, indent, "} // namespace lox")
     add_to_file(file_obj, indent, "")
     add_to_file(file_obj, indent, "#endif")
