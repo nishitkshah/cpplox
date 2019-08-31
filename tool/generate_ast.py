@@ -1,5 +1,7 @@
 import sys
 
+# TODO: Fix this code based on latest changes in AST Class definition format
+
 class ClassDefinition:
     def __init__(self, class_name, field_list):
         class_name = class_name.strip()
@@ -51,7 +53,7 @@ def generate_subclasses(file_obj, base_name, subclasses, indent):
             add_to_file(file_obj, indent+2, "%s;" % field)
         add_to_file(file_obj, indent, "};    // class %s" % subclass.class_name)
 
-def generate_base_class(file_obj, base_name, subclasses, indent): # TODO: Complete
+def generate_base_class(file_obj, base_name, subclasses, indent):
     add_to_file(file_obj, indent, "")
     add_to_file(file_obj, indent, "class %s {" % base_name)
     add_to_file(file_obj, indent+1, "// Abstract class for Abstract Syntax Tree")

@@ -71,6 +71,7 @@ namespace lox
 
 } // namespace lox
 
+/*
 int main() {
     lox::Expr* expression = new lox::Expr::Binary(
         new lox::Expr::Unary(
@@ -88,3 +89,4 @@ int main() {
     ap.print(expression, vr);
     std::cout << s;
 }
+*/
