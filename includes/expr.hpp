@@ -19,37 +19,37 @@ namespace lox {
             class Visitor;
             
             template <class T>
-            T accept(Visitor<T> visitor){}
+            T accept(Visitor<T> &visitor){}
     };    // class Expr
     
     template <class T>
     class Expr::Visitor {
-        virtual T visitBinaryExpr(Binary expr)=0;
-        virtual T visitGroupingExpr(Grouping expr)=0;
-        virtual T visitLiteralExpr(Literal expr)=0;
-        virtual T visitUnaryExpr(Unary expr)=0;
+        virtual T visitBinaryExpr(Binary* expr)=0;
+        virtual T visitGroupingExpr(Grouping* expr)=0;
+        virtual T visitLiteralExpr(Literal* expr)=0;
+        virtual T visitUnaryExpr(Unary* expr)=0;
     };    // class Visitor
     
     class Expr::Binary : public Expr {
         public:
-            Binary(Expr left, Token oper, Expr right);
+            Binary(Expr* left, Token oper, Expr* right);
             
             template <class T>
-            T accept(Expr::Visitor<T> visitor);
+            T accept(Expr::Visitor<T> &visitor);
             
-            Expr left;
+            Expr* left;
             Token oper;
-            Expr right;
+            Expr* right;
     };    // class Binary
     
     class Expr::Grouping : public Expr {
         public:
-            Grouping(Expr expression);
+            Grouping(Expr* expression);
             
             template <class T>
-            T accept(Expr::Visitor<T> visitor);
+            T accept(Expr::Visitor<T> &visitor);
             
-            Expr expression;
+            Expr* expression;
     };    // class Grouping
     
     class Expr::Literal : public Expr {
@@ -57,20 +57,20 @@ namespace lox {
             Literal(std::string value);
             
             template <class T>
-            T accept(Expr::Visitor<T> visitor);
+            T accept(Expr::Visitor<T> &visitor);
             
             std::string value;
     };    // class Literal
     
     class Expr::Unary : public Expr {
         public:
-            Unary(Token oper, Expr right);
+            Unary(Token oper, Expr* right);
             
             template <class T>
-            T accept(Expr::Visitor<T> visitor);
+            T accept(Expr::Visitor<T> &visitor);
             
             Token oper;
-            Expr right;
+            Expr* right;
     };    // class Unary
     
 } // namespace lox

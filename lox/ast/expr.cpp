@@ -6,24 +6,24 @@
 
 namespace lox {
     
-    Expr::Binary::Binary(Expr left, Token oper, Expr right) :
+    Expr::Binary::Binary(Expr* left, Token oper, Expr* right) :
         left(left),
         oper(oper),
         right(right)
     {}
     
     template <class T>
-    T Expr::Binary::accept(Visitor<T> visitor) {
-        return visitor.visitBinaryExpr(*this);
+    T Expr::Binary::accept(Visitor<T> &visitor) {
+        return visitor.visitBinaryExpr(this);
     }
     
-    Expr::Grouping::Grouping(Expr expression) :
+    Expr::Grouping::Grouping(Expr* expression) :
         expression(expression)
     {}
     
     template <class T>
-    T Expr::Grouping::accept(Visitor<T> visitor) {
-        return visitor.visitGroupingExpr(*this);
+    T Expr::Grouping::accept(Visitor<T> &visitor) {
+        return visitor.visitGroupingExpr(this);
     }
     
     Expr::Literal::Literal(std::string value) :
@@ -31,18 +31,18 @@ namespace lox {
     {}
     
     template <class T>
-    T Expr::Literal::accept(Visitor<T> visitor) {
-        return visitor.visitLiteralExpr(*this);
+    T Expr::Literal::accept(Visitor<T> &visitor) {
+        return visitor.visitLiteralExpr(this);
     }
     
-    Expr::Unary::Unary(Token oper, Expr right) :
+    Expr::Unary::Unary(Token oper, Expr* right) :
         oper(oper),
         right(right)
     {}
     
     template <class T>
-    T Expr::Unary::accept(Visitor<T> visitor) {
-        return visitor.visitUnaryExpr(*this);
+    T Expr::Unary::accept(Visitor<T> &visitor) {
+        return visitor.visitUnaryExpr(this);
     }
     
 } // namespace lox

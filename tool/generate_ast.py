@@ -24,7 +24,7 @@ def generate_visitor_class(file_obj, base_name, subclasses, indent):
     add_to_file(file_obj, indent, "template <class T>")
     add_to_file(file_obj, indent, "class %s::Visitor {" % base_name)
     for subclass in subclasses:
-        add_to_file(file_obj, indent+1, "virtual T visit%s%s(%s %s)=0;" % (
+        add_to_file(file_obj, indent+1, "virtual T visit%s%s(%s* %s)=0;" % (
             subclass.class_name,
             base_name,
             subclass.class_name,
@@ -47,7 +47,7 @@ def generate_subclasses(file_obj, base_name, subclasses, indent):
         ))
         add_to_file(file_obj, indent+2, "")
         add_to_file(file_obj, indent+2, "template <class T>")
-        add_to_file(file_obj, indent+2, "T accept(%s::Visitor<T> visitor);" % base_name)
+        add_to_file(file_obj, indent+2, "T accept(%s::Visitor<T> &visitor);" % base_name)
         add_to_file(file_obj, indent+2, "")
         for field in subclass.fields:
             add_to_file(file_obj, indent+2, "%s;" % field)
@@ -64,26 +64,8 @@ def generate_base_class(file_obj, base_name, subclasses, indent): # TODO: Comple
     add_to_file(file_obj, indent+2, "class Visitor;")
     add_to_file(file_obj, indent+2, "")
     add_to_file(file_obj, indent+2, "template <class T>")
-    add_to_file(file_obj, indent+2, "T accept(Visitor<T> visitor){}")
+    add_to_file(file_obj, indent+2, "T accept(Visitor<T> &visitor){}")
     add_to_file(file_obj, indent, "};    // class %s" % base_name)
-
-def generate_header_file(file_obj, base_name, subclasses, indent=0):
-    add_to_file(file_obj, indent, "// Reference: http://www.craftinginterpreters.com/")
-    add_to_file(file_obj, indent, "")
-    add_to_file(file_obj, indent, "#ifndef EXPR_H")
-    add_to_file(file_obj, indent, "#define EXPR_H")
-    add_to_file(file_obj, indent, "")
-    add_to_file(file_obj, indent, "#include <string>")
-    add_to_file(file_obj, indent, "#include \"token.hpp\"")
-    add_to_file(file_obj, indent, "")
-    add_to_file(file_obj, indent, "namespace lox {")
-    generate_base_class(file_obj, base_name, subclasses, indent+1)
-    generate_visitor_class(file_obj, base_name, subclasses, indent+1)
-    generate_subclasses(file_obj, base_name, subclasses, indent+1)
-    add_to_file(file_obj, indent+1, "")
-    add_to_file(file_obj, indent, "} // namespace lox")
-    add_to_file(file_obj, indent, "")
-    add_to_file(file_obj, indent, "#endif")
 
 def generate_subclass_definition(file_obj, base_name, subclasses, indent):
     for subclass in subclasses:
@@ -110,15 +92,33 @@ def generate_subclass_definition(file_obj, base_name, subclasses, indent):
         add_to_file(file_obj, indent, "{}")
         add_to_file(file_obj, indent, "")
         add_to_file(file_obj, indent, "template <class T>")
-        add_to_file(file_obj, indent, "T %s::%s::accept(Visitor<T> visitor) {" % (
+        add_to_file(file_obj, indent, "T %s::%s::accept(Visitor<T> &visitor) {" % (
             base_name,
             subclass.class_name,
         ))
-        add_to_file(file_obj, indent+1, "return visitor.visit%s%s(*this);" % (
+        add_to_file(file_obj, indent+1, "return visitor.visit%s%s(this);" % (
             subclass.class_name,
             base_name,
         ))
         add_to_file(file_obj, indent, "}")
+
+def generate_header_file(file_obj, base_name, subclasses, indent=0):
+    add_to_file(file_obj, indent, "// Reference: http://www.craftinginterpreters.com/")
+    add_to_file(file_obj, indent, "")
+    add_to_file(file_obj, indent, "#ifndef EXPR_H")
+    add_to_file(file_obj, indent, "#define EXPR_H")
+    add_to_file(file_obj, indent, "")
+    add_to_file(file_obj, indent, "#include <string>")
+    add_to_file(file_obj, indent, "#include \"token.hpp\"")
+    add_to_file(file_obj, indent, "")
+    add_to_file(file_obj, indent, "namespace lox {")
+    generate_base_class(file_obj, base_name, subclasses, indent+1)
+    generate_visitor_class(file_obj, base_name, subclasses, indent+1)
+    generate_subclasses(file_obj, base_name, subclasses, indent+1)
+    add_to_file(file_obj, indent+1, "")
+    add_to_file(file_obj, indent, "} // namespace lox")
+    add_to_file(file_obj, indent, "")
+    add_to_file(file_obj, indent, "#endif")
 
 def generate_definition_file(file_obj, base_name, subclasses, indent=0):
     add_to_file(file_obj, indent, "// Reference: http://www.craftinginterpreters.com/")
@@ -156,8 +156,8 @@ if len(sys.argv)!=2:
     sys.exit(0)
 output_dir = sys.argv[1]
 define_ast(output_dir, "Expr", [
-    "Binary   : Expr left, Token oper, Expr right",
-    "Grouping : Expr expression",
+    "Binary   : Expr* left, Token oper, Expr* right",
+    "Grouping : Expr* expression",
     "Literal  : std::string value",
-    "Unary    : Token oper, Expr right",
+    "Unary    : Token oper, Expr* right",
 ])
