@@ -6,43 +6,53 @@
 
 namespace lox {
     
+    Expr::Expr(ExprType expr_type) :
+        expr_type(expr_type)
+    {}
+    
     Expr::Binary::Binary(Expr* left, Token oper, Expr* right) :
+        Expr(ExprType::BINARY),
         left(left),
         oper(oper),
         right(right)
     {}
-    
-    template <class T>
-    T Expr::Binary::accept(Visitor<T> &visitor) {
-        return visitor.visitBinaryExpr(this);
-    }
-    
+        
     Expr::Grouping::Grouping(Expr* expression) :
+        Expr(ExprType::GROUPING),
         expression(expression)
     {}
     
-    template <class T>
-    T Expr::Grouping::accept(Visitor<T> &visitor) {
-        return visitor.visitGroupingExpr(this);
-    }
-    
     Expr::Literal::Literal(std::string value) :
+        Expr(ExprType::LITERAL),
         value(value)
     {}
     
-    template <class T>
-    T Expr::Literal::accept(Visitor<T> &visitor) {
-        return visitor.visitLiteralExpr(this);
-    }
-    
     Expr::Unary::Unary(Token oper, Expr* right) :
+        Expr(ExprType::UNARY),
         oper(oper),
         right(right)
     {}
-    
+
     template <class T>
-    T Expr::Unary::accept(Visitor<T> &visitor) {
-        return visitor.visitUnaryExpr(this);
+    T Expr::accept(Expr::Visitor<T> &visitor) {
+        Binary* binary;
+        Grouping* grouping;
+        Literal* literal;
+        Unary* unary;
+        switch(this->expr_type) {
+            case ExprType::BINARY :
+                binary = (Binary*)this;
+                return binary->accept(visitor);
+            case ExprType::GROUPING :
+                grouping = (Grouping*)this;
+                return grouping->accept<T>(visitor);
+            case ExprType::LITERAL :
+                literal = (Literal*)this;
+                return literal->accept<T>(visitor);
+            case ExprType::UNARY :
+                unary = (Unary*)this;
+                return unary->accept<T>(visitor);
+        }
     }
     
 } // namespace lox

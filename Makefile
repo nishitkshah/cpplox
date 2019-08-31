@@ -6,6 +6,7 @@ CXXDIR=lox
 ASTDIR=lox/ast
 
 OBJ = cpplox.o lox.o scanner.o token.o expr.o
+PRINTEROBJ = lox.o scanner.o token.o expr.o ast_printer.o
 
 %.o: %.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -17,6 +18,9 @@ OBJ = cpplox.o lox.o scanner.o token.o expr.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 lox: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
+
+ast_printer: $(PRINTEROBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean

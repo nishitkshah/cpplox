@@ -11,9 +11,7 @@ class ClassDefinition:
         self.field_names = [field.split()[1] for field in self.fields]
 
 def add_to_file(file_obj, indent, line, newline=True):
-    indent_text = ""
-    for i in range(indent):
-        indent_text += "    "
+    indent_text = "    " * indent
     line = indent_text + line
     if newline:
         line = line + '\n'

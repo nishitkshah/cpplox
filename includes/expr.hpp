@@ -7,10 +7,18 @@
 #include "token.hpp"
 
 namespace lox {
+
+    enum class ExprType
+    {
+        BINARY, GROUPING, LITERAL, UNARY
+    };
     
     class Expr {
         // Abstract class for Abstract Syntax Tree
         public:
+            ExprType expr_type;
+            Expr(ExprType expr_type);
+
             class Binary;
             class Grouping;
             class Literal;
@@ -18,16 +26,17 @@ namespace lox {
             template <class T>
             class Visitor;
             
-            template <class T>
-            T accept(Visitor<T> &visitor){}
+        template <class T>
+        T accept(Expr::Visitor<T> &visitor);
     };    // class Expr
     
     template <class T>
     class Expr::Visitor {
-        virtual T visitBinaryExpr(Binary* expr)=0;
-        virtual T visitGroupingExpr(Grouping* expr)=0;
-        virtual T visitLiteralExpr(Literal* expr)=0;
-        virtual T visitUnaryExpr(Unary* expr)=0;
+        public:
+            virtual T visitBinaryExpr(Binary* expr)=0;
+            virtual T visitGroupingExpr(Grouping* expr)=0;
+            virtual T visitLiteralExpr(Literal* expr)=0;
+            virtual T visitUnaryExpr(Unary* expr)=0;
     };    // class Visitor
     
     class Expr::Binary : public Expr {
@@ -35,7 +44,9 @@ namespace lox {
             Binary(Expr* left, Token oper, Expr* right);
             
             template <class T>
-            T accept(Expr::Visitor<T> &visitor);
+            T accept(Visitor<T> &visitor) {
+                return visitor.visitBinaryExpr(this);
+            }
             
             Expr* left;
             Token oper;
@@ -47,8 +58,10 @@ namespace lox {
             Grouping(Expr* expression);
             
             template <class T>
-            T accept(Expr::Visitor<T> &visitor);
-            
+            T accept(Visitor<T> &visitor) {
+                return visitor.visitGroupingExpr(this);
+            }
+                        
             Expr* expression;
     };    // class Grouping
     
@@ -57,7 +70,9 @@ namespace lox {
             Literal(std::string value);
             
             template <class T>
-            T accept(Expr::Visitor<T> &visitor);
+            T accept(Visitor<T> &visitor) {
+                return visitor.visitLiteralExpr(this);
+            }
             
             std::string value;
     };    // class Literal
@@ -67,12 +82,14 @@ namespace lox {
             Unary(Token oper, Expr* right);
             
             template <class T>
-            T accept(Expr::Visitor<T> &visitor);
+            T accept(Expr::Visitor<T> &visitor) {
+                return visitor.visitUnaryExpr(this);
+            }
             
             Token oper;
             Expr* right;
     };    // class Unary
-    
+
 } // namespace lox
 
 #endif
