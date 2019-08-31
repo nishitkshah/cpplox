@@ -19,44 +19,6 @@ def add_to_file(file_obj, indent, line, newline=True):
         line = line + '\n'
     file_obj.write(line)
 
-def get_visitor_class(base_name, types):
-    visitor_class = "template <class T>\n"
-    visitor_class += "class Visitor {\n"
-    for subclass in types:
-        class_name = subclass.split(':', 1)[0].strip()
-        visitor_class += "    virtual T visit" + class_name + base_name + "(" + \
-            class_name + " " + base_name.lower() + ")=0;\n"
-    visitor_class += "};    // class Visitor\n"
-    return visitor_class
-
-def define_type(base_name, class_name, fields):
-    type_definition = "class " + class_name + " : public " + base_name + " {\n"
-    type_definition += "    public:\n"
-    type_definition += "        " + class_name + "(" + fields + ") {\n"
-    for field in fields.split(", "):
-        field_name = field.split()[1]
-        type_definition += "            this->" + field_name + " = " + field_name + ";\n"
-    type_definition += "        }\n"
-    type_definition += "        \n"
-    type_definition += "        template <class T>\n"
-    type_definition += "        T accept(Visitor<T> visitor) {\n"
-    type_definition += "            return visitor.visit" + class_name + base_name + "(*this);\n"
-    type_definition += "        }\n"
-    type_definition += "        \n"
-    for field in fields.split(", "):
-        type_definition += "        " + field + ";\n"
-    type_definition += "};    // class " + class_name + "\n"
-    return type_definition
-
-def get_subclass_content(base_name, types):
-    subclass_content = '\n'
-    for subclass in types:
-        class_name = subclass.split(':', 1)[0].strip()
-        fields = subclass.split(':', 1)[1].strip()
-        subclass_content += define_type(base_name, class_name, fields)
-        subclass_content += '\n'
-    return subclass_content
-
 def generate_visitor_class(file_obj, base_name, subclasses, indent):
     add_to_file(file_obj, indent, "")
     add_to_file(file_obj, indent, "template <class T>")
