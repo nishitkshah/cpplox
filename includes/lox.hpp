@@ -16,6 +16,7 @@ namespace lox {
             static void run_prompt();
             static void run(std::string s);
             static void error(int line, std::string message);
+            static void error(Token token, std::string message);
         private:
             static void report(int line, std::string where, std::string message);
     };

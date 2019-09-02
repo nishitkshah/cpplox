@@ -52,4 +52,12 @@ namespace lox {
         had_error = true;
     }
 
+    void Lox::error(Token token, std::string message) {
+        if(token.type == TokenType::END_OF_FILE) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
+    }
+
 } // namespace lox

@@ -1,8 +1,10 @@
 // Reference: http://www.craftinginterpreters.com/
 
-#include "expr.hpp"
 #include <string>
+
+#include "expr.hpp"
 #include "token.hpp"
+#include "token_type.hpp"
 
 namespace lox {
     
@@ -24,8 +26,9 @@ namespace lox {
         visitor.visit(this, vr);
     }
     
-    Expr::Literal::Literal(std::string value) :
-        value(value)
+    Expr::Literal::Literal(std::string value, TokenType type) :
+        value(value),
+        type(type)
     {}
     
     void Expr::Literal::accept(Visitor &visitor, VisitorReturn vr) {

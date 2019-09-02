@@ -6,6 +6,7 @@
 #include <string>
 
 #include "token.hpp"
+#include "token_type.hpp"
 #include "visitor_return.hpp"
 
 namespace lox {
@@ -53,11 +54,12 @@ namespace lox {
     
     class Expr::Literal : public Expr {
         public:
-            Literal(std::string value);
+            Literal(std::string value, TokenType type);
             
             virtual void accept(Visitor &visitor, VisitorReturn vr) override;
             
             std::string value;
+            TokenType type;
     };    // class Literal
     
     class Expr::Unary : public Expr {
