@@ -1,73 +1,72 @@
+// Reference: http://www.craftinginterpreters.com/
+
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "ast_printer.hpp"
 #include "expr.hpp"
 #include "visitor_return.hpp"
 
 namespace lox
 {
 
-    class AstPrinter : Expr::Visitor {
-        public:
-            void print(Expr* expr, VisitorReturn vr) {
-                expr->accept(*this, vr);
-            }
+    void AstPrinter::print(Expr* expr, VisitorReturn vr) {
+        expr->accept(*this, vr);
+    }
 
-            virtual void visit(Expr::Binary* expr, VisitorReturn vr) override {
-                std::vector<Expr*> ep = {expr->left, expr->right};
-                if(vr.return_type != VisitorReturnType::STRING){
-                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
-                    throw "AstPrinter expects VisitorReturnType STRING\n";
-                }
-                std::string* ret_pt = (std::string*)vr.return_pointer;
-                *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
-            }
+    void AstPrinter::visit(Expr::Binary* expr, VisitorReturn vr) {
+        std::vector<Expr*> ep = {expr->left, expr->right};
+        if(vr.return_type != VisitorReturnType::STRING){
+            std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+            throw "AstPrinter expects VisitorReturnType STRING\n";
+        }
+        std::string* ret_pt = (std::string*)vr.return_pointer;
+        *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
+    }
 
-            virtual void visit(Expr::Grouping* expr, VisitorReturn vr) override {
-                std::vector<Expr*> ep = {expr->expression};
-                if(vr.return_type != VisitorReturnType::STRING){
-                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
-                    throw "AstPrinter expects VisitorReturnType STRING\n";
-                }
-                std::string* ret_pt = (std::string*)vr.return_pointer;
-                *(ret_pt) = parenthesize("group", ep);
-            }
+    void AstPrinter::visit(Expr::Grouping* expr, VisitorReturn vr) {
+        std::vector<Expr*> ep = {expr->expression};
+        if(vr.return_type != VisitorReturnType::STRING){
+            std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+            throw "AstPrinter expects VisitorReturnType STRING\n";
+        }
+        std::string* ret_pt = (std::string*)vr.return_pointer;
+        *(ret_pt) = parenthesize("group", ep);
+    }
 
-            virtual void visit(Expr::Literal* expr, VisitorReturn vr) override {
-                if(vr.return_type != VisitorReturnType::STRING){
-                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
-                    throw "AstPrinter expects VisitorReturnType STRING\n";
-                }
-                std::string* ret_pt = (std::string*)vr.return_pointer;
-                *(ret_pt) = expr->value;
-            }
+    void AstPrinter::visit(Expr::Literal* expr, VisitorReturn vr) {
+        if(vr.return_type != VisitorReturnType::STRING){
+            std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+            throw "AstPrinter expects VisitorReturnType STRING\n";
+        }
+        std::string* ret_pt = (std::string*)vr.return_pointer;
+        *(ret_pt) = expr->value;
+    }
 
-            virtual void visit(Expr::Unary* expr, VisitorReturn vr) override {
-                std::vector<Expr*> ep = {expr->right};
-                if(vr.return_type != VisitorReturnType::STRING){
-                    std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
-                    throw "AstPrinter expects VisitorReturnType STRING\n";
-                }
-                std::string* ret_pt = (std::string*)vr.return_pointer;
-                *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
-            }
+    void AstPrinter::visit(Expr::Unary* expr, VisitorReturn vr) {
+        std::vector<Expr*> ep = {expr->right};
+        if(vr.return_type != VisitorReturnType::STRING){
+            std::cerr << "AstPrinter expects VisitorReturnType STRING\n";
+            throw "AstPrinter expects VisitorReturnType STRING\n";
+        }
+        std::string* ret_pt = (std::string*)vr.return_pointer;
+        *(ret_pt) = parenthesize((expr->oper).lexeme, ep);
+    }
 
-        private:
-            std::string parenthesize(std::string name, std::vector<Expr*> ep) {
-                std::stringstream ss;
-                ss << "(" << name;
-                for(auto p: ep){
-                    std::string s;
-                    VisitorReturn vr(VisitorReturnType::STRING, &s);
-                    (p->accept)(*this, vr);
-                    ss << " " << s;
-                }
-                ss << ")";
-                return ss.str();
-            }
-    };
+    std::string AstPrinter::parenthesize(std::string name, std::vector<Expr*> ep) {
+        std::stringstream ss;
+        ss << "(" << name;
+        for(auto p: ep){
+            std::string s;
+            VisitorReturn vr(VisitorReturnType::STRING, &s);
+            (p->accept)(*this, vr);
+            ss << " " << s;
+        }
+        ss << ")";
+        return ss.str();
+    }
 
 } // namespace lox
 

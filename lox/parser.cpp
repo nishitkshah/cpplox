@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "expr.hpp"
 #include "lox.hpp"
@@ -93,23 +94,25 @@ namespace lox {
         types[0] = TokenType::NIL;
         if(match(types)) return new Expr::Literal("nil", types[0]);
 
-        types.resize(2);
-        types[0] = TokenType::NUMBER;
-        types[1] = TokenType::STRING;
+        types.clear();
+        types.push_back(TokenType::NUMBER);
+        types.push_back(TokenType::STRING);
         if(match(types)) {
             return new Expr::Literal(previous().literal, previous().type);
         }
 
-        types.resize(1);
-        types[0] = TokenType::LEFT_PAREN;
+        types.clear();
+        types.push_back(TokenType::LEFT_PAREN);
         if(match(types)) {
             Expr* expr = expression();
             consume(TokenType::RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr::Grouping(expr);
         }
+        
+        throw error(peek(), "Expect expression.");
     }
 
-    bool Parser::match(std::vector<TokenType> types) {
+    bool Parser::match(std::vector<TokenType> &types) {
         for(auto type: types) {
             if(check(type)) {
                 advance();
@@ -130,7 +133,7 @@ namespace lox {
     }
 
     Token Parser::advance() {
-        if(is_at_end()) current++;
+        if(!is_at_end()) current++;
         return previous();
     }
 
@@ -151,9 +154,40 @@ namespace lox {
         return new Parser::ParseError();
     }
 
+    void Parser::synchronize() {
+        advance();
+
+        while(!is_at_end()) {
+            if(previous().type == TokenType::SEMICOLON) return;
+
+            switch(peek().type) {
+                case TokenType::CLASS:
+                case TokenType::FUN:
+                case TokenType::VAR:
+                case TokenType::FOR:
+                case TokenType::IF:
+                case TokenType::WHILE:
+                case TokenType::PRINT:
+                case TokenType::RETURN:
+                    return;
+            }
+
+            advance();
+        }
+    }
+
     Parser::Parser(std::vector<Token> tokens) :
         tokens(tokens),
         current(0)
     {}
+
+    Expr* Parser::parse(){
+        try {
+            return expression();
+        } catch(const ParseError* e) {
+            return nullptr;
+        }
+        
+    }
 
 } // namespace lox

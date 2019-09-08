@@ -34,7 +34,7 @@ namespace lox {
 
             Expr* primary();
 
-            bool match(std::vector<TokenType> types);
+            bool match(std::vector<TokenType> &types);
 
             Token consume(TokenType type, std::string message);
 
@@ -50,8 +50,12 @@ namespace lox {
 
             ParseError* error(Token token, std::string message);
 
+            void synchronize();
+
         public:
             Parser(std::vector<Token> tokens);
+
+            Expr* parse();
     };
 
 } // namespace lox

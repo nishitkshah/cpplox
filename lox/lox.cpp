@@ -6,7 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "ast_printer.hpp"
+#include "expr.hpp"
 #include "lox.hpp"
+#include "parser.hpp"
 #include "scanner.hpp"
 #include "token.hpp"
 
@@ -38,9 +41,20 @@ namespace lox {
     void Lox::run(std::string s) {
         Scanner scanner(s);
         std::vector<Token> tokens = scanner.scan_tokens();
-        for(Token token: tokens){
+        for(Token token: tokens) {
             std::cout << token.str() << std::endl;
         }
+        Parser parser(tokens);
+        Expr* expression = parser.parse();
+
+        // Stop if there was a syntax error.
+        if(had_error) return;
+
+        std::string ast_str;
+        lox::VisitorReturn vr(lox::VisitorReturnType::STRING, &ast_str);
+        AstPrinter ast_printer;
+        ast_printer.print(expression, vr);
+        std::cout << ast_str << std::endl;
     }
 
     void Lox::error(int line, std::string message) {

@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "token.hpp"
+
 namespace lox {
 
     class Lox {
